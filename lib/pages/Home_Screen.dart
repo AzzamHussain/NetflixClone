@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:netflixclone/constants/utils.dart';
+import 'package:netflixclone/models/upcoming_models.dart';
+import 'package:netflixclone/services/api_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,6 +11,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Future<UpcomingModels> upcomingFuture;
+  ApiServices apiServices = ApiServices();
+  void initState() {
+    super.initState();
+    upcomingFuture = apiServices.getUpcomingModels();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
