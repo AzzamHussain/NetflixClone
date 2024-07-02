@@ -13,12 +13,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<UpcomingModels> upcomingFuture;
-  ApiServices apiServices = ApiServices();
+  late Future<UpcomingModels> nowPlayingFuture;
+
+  final ApiServices apiServices = ApiServices();
 
   @override
   void initState() {
     super.initState();
     upcomingFuture = apiServices.getUpcomingModels();
+    nowPlayingFuture = apiServices.getNowPlaying();
   }
 
   @override
@@ -32,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(right: 20.0),
             child: InkWell(
               onTap: () {},
-              child: Icon(
+              child: const Icon(
                 Icons.search,
                 color: Colors.white,
               ),
@@ -51,7 +54,16 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            MovieCards(future: upcomingFuture, headlineText: "Upcoming Movies"),
+            SizedBox(
+              height: 300,
+              child: MovieCards(
+                  future: upcomingFuture, headlineText: "Upcoming Movies"),
+            ),
+            SizedBox(
+              height: 220,
+              child: MovieCards(
+                  future: nowPlayingFuture, headlineText: "Now Playing"),
+            ),
           ],
         ),
       ),
