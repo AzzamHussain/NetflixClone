@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:netflixclone/constants/utils.dart';
 import 'package:netflixclone/models/now_playing.dart';
+import 'package:netflixclone/models/tv_models.dart';
 import 'package:netflixclone/models/upcoming_models.dart';
 import 'package:netflixclone/services/api_services.dart';
+import 'package:netflixclone/widgets/custom_carousel.dart';
 import 'package:netflixclone/widgets/movie_cards.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<UpcomingModels> upcomingFuture;
   late Future<NowPlaying> nowPlayingFuture;
+  late Future<TvSeriesModel> tvSeriesFuture;
 
   final ApiServices apiServices = ApiServices();
 
@@ -23,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     upcomingFuture = apiServices.getUpcomingModels();
     nowPlayingFuture = apiServices.getNowPlaying();
+    tvSeriesFuture = apiServices.getTopRatedMovies();
   }
 
   @override
@@ -55,18 +59,31 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              height: 260,
-              child: MovieCards(
-                  future: upcomingFuture, headlineText: "Upcoming Movies"),
+            FutureBuilder<TvSeriesModel>(
+              future: tvSeriesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading TV series'));
+                } else if (!snapshot.hasData ||
+                    snapshot.data!.results.isEmpty) {
+                  return const Center(child: Text('No TV series available'));
+                } else {
+                  return CustomCarousel(data: snapshot.data!);
+                }
+              },
             ),
             SizedBox(
-              height: 260,
+              height: 255,
               child: MovieCards(
                   future: nowPlayingFuture, headlineText: "Now Playing"),
             ),
-
-            //
+            SizedBox(
+              height: 255,
+              child: MovieCards(
+                  future: upcomingFuture, headlineText: "Upcoming Movies"),
+            ),
           ],
         ),
       ),
