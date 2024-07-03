@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:netflixclone/constants/utils.dart';
+import 'package:netflixclone/models/now_playing.dart';
 import 'package:netflixclone/models/upcoming_models.dart';
 
-class MovieCards extends StatelessWidget {
-  final Future<UpcomingModels> future;
+class MovieCards<T> extends StatelessWidget {
+  final Future<T> future;
   final String headlineText;
 
   const MovieCards({
@@ -14,18 +15,25 @@ class MovieCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<T>(
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return const Center(child: Text('Error loading movies'));
-        } else if (!snapshot.hasData ||
-            snapshot.data?.results.isEmpty == true) {
+        } else if (!snapshot.hasData) {
           return const Center(child: Text('No movies available'));
         } else {
-          var data = snapshot.data!.results;
+          var data;
+          if (snapshot.data is UpcomingModels) {
+            data = (snapshot.data as UpcomingModels).results;
+          } else if (snapshot.data is NowPlaying) {
+            data = (snapshot.data as NowPlaying).results;
+          } else {
+            return const Center(child: Text('Unknown data type'));
+          }
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
