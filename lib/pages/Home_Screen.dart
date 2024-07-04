@@ -79,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: MovieCards(
                   future: nowPlayingFuture, headlineText: "Now Playing"),
             ),
+            SizedBox(height: 20),
             SizedBox(
               height: 255,
               child: MovieCards(
