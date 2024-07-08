@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class UpcomingModels {
   Dates dates;
   int page;
@@ -17,8 +19,9 @@ class UpcomingModels {
     return UpcomingModels(
       dates: Dates.fromJson(json['dates']),
       page: json['page'],
-      results:
-          List<Result>.from(json['results'].map((x) => Result.fromJson(x))),
+      results: (json['results'] as List)
+          .map((item) => Result.fromJson(item))
+          .toList(),
       totalPages: json['total_pages'],
       totalResults: json['total_results'],
     );
@@ -28,7 +31,7 @@ class UpcomingModels {
     return {
       'dates': dates.toJson(),
       'page': page,
-      'results': List<dynamic>.from(results.map((x) => x.toJson())),
+      'results': results.map((result) => result.toJson()).toList(),
       'total_pages': totalPages,
       'total_results': totalResults,
     };
@@ -92,7 +95,7 @@ class Result {
   String originalTitle;
   String overview;
   double popularity;
-  String posterPath;
+  String? posterPath;
   DateTime releaseDate;
   String title;
   bool video;
@@ -119,11 +122,13 @@ class Result {
   factory Result.fromJson(Map<String, dynamic> json) {
     return Result(
       adult: json['adult'],
-      backdropPath: json['backdrop_path'],
-      genreIds: List<int>.from(json['genre_ids'].map((x) => x)),
+      backdropPath: json['backdrop_path'] ?? '',
+      genreIds: List<int>.from(json['genre_ids']),
       id: json['id'],
-      originalLanguage: OriginalLanguage.values.firstWhere((e) =>
-          e.toString() == 'OriginalLanguage.${json['original_language']}'),
+      originalLanguage: OriginalLanguage.values.firstWhere(
+          (e) =>
+              e.toString() == 'OriginalLanguage.${json['original_language']}',
+          orElse: () => OriginalLanguage.EN), // Default to EN if not found
       originalTitle: json['original_title'],
       overview: json['overview'],
       popularity: json['popularity'].toDouble(),
@@ -140,7 +145,7 @@ class Result {
     return {
       'adult': adult,
       'backdrop_path': backdropPath,
-      'genre_ids': List<dynamic>.from(genreIds.map((x) => x)),
+      'genre_ids': genreIds,
       'id': id,
       'original_language': originalLanguage.toString().split('.').last,
       'original_title': originalTitle,
