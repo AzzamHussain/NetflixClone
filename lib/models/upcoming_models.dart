@@ -13,7 +13,6 @@ class UpcomingModels {
     required this.totalResults,
   });
 
-  // Factory constructor to create an instance from JSON
   factory UpcomingModels.fromJson(Map<String, dynamic> json) {
     return UpcomingModels(
       dates: Dates.fromJson(json['dates']),
@@ -23,6 +22,16 @@ class UpcomingModels {
       totalPages: json['total_pages'],
       totalResults: json['total_results'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'dates': dates.toJson(),
+      'page': page,
+      'results': List<dynamic>.from(results.map((x) => x.toJson())),
+      'total_pages': totalPages,
+      'total_results': totalResults,
+    };
   }
 
   UpcomingModels copyWith({
@@ -50,12 +59,18 @@ class Dates {
     required this.minimum,
   });
 
-  // Factory constructor to create an instance from JSON
   factory Dates.fromJson(Map<String, dynamic> json) {
     return Dates(
       maximum: DateTime.parse(json['maximum']),
       minimum: DateTime.parse(json['minimum']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'maximum': maximum.toIso8601String(),
+      'minimum': minimum.toIso8601String(),
+    };
   }
 
   Dates copyWith({
@@ -101,14 +116,14 @@ class Result {
     required this.voteCount,
   });
 
-  // Factory constructor to create an instance from JSON
   factory Result.fromJson(Map<String, dynamic> json) {
     return Result(
       adult: json['adult'],
       backdropPath: json['backdrop_path'],
       genreIds: List<int>.from(json['genre_ids'].map((x) => x)),
       id: json['id'],
-      originalLanguage: originalLanguageValues.map[json['original_language']]!,
+      originalLanguage: OriginalLanguage.values.firstWhere((e) =>
+          e.toString() == 'OriginalLanguage.${json['original_language']}'),
       originalTitle: json['original_title'],
       overview: json['overview'],
       popularity: json['popularity'].toDouble(),
@@ -119,6 +134,25 @@ class Result {
       voteAverage: json['vote_average'].toDouble(),
       voteCount: json['vote_count'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'adult': adult,
+      'backdrop_path': backdropPath,
+      'genre_ids': List<dynamic>.from(genreIds.map((x) => x)),
+      'id': id,
+      'original_language': originalLanguage.toString().split('.').last,
+      'original_title': originalTitle,
+      'overview': overview,
+      'popularity': popularity,
+      'poster_path': posterPath,
+      'release_date': releaseDate.toIso8601String(),
+      'title': title,
+      'video': video,
+      'vote_average': voteAverage,
+      'vote_count': voteCount,
+    };
   }
 
   Result copyWith({
@@ -155,23 +189,4 @@ class Result {
       );
 }
 
-enum OriginalLanguage { EN, ES, FR, ZH }
-
-final originalLanguageValues = EnumValues({
-  "en": OriginalLanguage.EN,
-  "es": OriginalLanguage.ES,
-  "fr": OriginalLanguage.FR,
-  "zh": OriginalLanguage.ZH,
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  Map<T, String>? reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap ??= map.map((k, v) => MapEntry(v, k));
-    return reverseMap!;
-  }
-}
+enum OriginalLanguage { EN, TL, ZH }

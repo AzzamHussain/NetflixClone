@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Search {
   int page;
   List<dynamic> results;

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:netflixclone/constants/utils.dart';
 import 'package:netflixclone/models/now_playing.dart';
+import 'package:netflixclone/models/recommendation_model.dart';
 import 'package:netflixclone/models/search_model.dart';
 import 'package:netflixclone/models/tv_models.dart';
 import 'package:netflixclone/models/upcoming_models.dart';
@@ -67,5 +68,18 @@ class ApiServices {
       return Search.fromJson(jsonDecode(response.body));
     }
     throw Exception("Failed to load Search movies");
+  }
+
+  //*********************Recommendation****************** */
+  Future<Recommendation> getTopSearchMovies() async {
+    final endpoint = "discover/tv";
+    final url = "$baseUrl$endpoint$key";
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      log("success");
+      return Recommendation.fromJson(jsonDecode(response.body));
+    }
+    throw Exception("Failed to load NowPlaying movies");
   }
 }

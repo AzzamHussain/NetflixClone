@@ -30,13 +30,3 @@ class _SplashscreenState extends State<Splashscreen> {
     );
   }
 }
-// import 'package:flutter/material.dart';
-
-// class Splashscreen extends StatefulWidget {
-//   const Splashscreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
- 
-//   }
-// }

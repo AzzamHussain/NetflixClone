@@ -1,18 +1,18 @@
-class NowPlaying {
+class Recommendation {
   int page;
   List<Result> results;
   int totalPages;
   int totalResults;
 
-  NowPlaying({
+  Recommendation({
     required this.page,
     required this.results,
     required this.totalPages,
     required this.totalResults,
   });
 
-  factory NowPlaying.fromJson(Map<String, dynamic> json) {
-    return NowPlaying(
+  factory Recommendation.fromJson(Map<String, dynamic> json) {
+    return Recommendation(
       page: json['page'],
       results:
           List<Result>.from(json['results'].map((x) => Result.fromJson(x))),
@@ -30,13 +30,13 @@ class NowPlaying {
     };
   }
 
-  NowPlaying copyWith({
+  Recommendation copyWith({
     int? page,
     List<Result>? results,
     int? totalPages,
     int? totalResults,
   }) =>
-      NowPlaying(
+      Recommendation(
         page: page ?? this.page,
         results: results ?? this.results,
         totalPages: totalPages ?? this.totalPages,
@@ -54,7 +54,7 @@ class Result {
   String originalName;
   String overview;
   double popularity;
-  String? posterPath;
+  String posterPath;
   DateTime firstAirDate;
   String name;
   double voteAverage;
