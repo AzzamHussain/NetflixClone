@@ -1,64 +1,200 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:netflixclone/constants/utils.dart';
 import 'package:netflixclone/models/movies_details.dart';
+import 'package:netflixclone/models/recommendation_model.dart';
 import 'package:netflixclone/services/api_services.dart';
 
 class DetailScreen extends StatefulWidget {
-  final int movie_id;
-  const DetailScreen({super.key, required this.movie_id});
+  final int movieId;
+  const DetailScreen({super.key, required this.movieId});
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
+  MovieDetailScreenState createState() => MovieDetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class MovieDetailScreenState extends State<DetailScreen> {
   ApiServices apiServices = ApiServices();
-  late Future<MovieDetails> movieDetails;
 
+  late Future<MovieDetails> movieDetail;
+  late Future<Recommendation> movieRecommendationModel;
+
+  @override
   void initState() {
+    fetchInitialData();
     super.initState();
-    FetchInitialData();
   }
 
-  FetchInitialData() {
-    movieDetails = apiServices.getMovieDetails(widget.movie_id);
+  fetchInitialData() {
+    movieDetail = apiServices.getMovieDetails(widget.movieId);
+    movieRecommendationModel = apiServices.getTopSearchMovies();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    print("movie id is${widget.movie_id}");
+    var size = MediaQuery.of(context).size;
+    print(widget.movieId);
     return Scaffold(
       body: SingleChildScrollView(
         child: FutureBuilder(
-            future: movieDetails,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final movie = snapshot.data;
+          future: movieDetail,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final movie = snapshot.data;
 
-                return Column(
-                  children: [
-                    Stack(
+              String genresText =
+                  movie!.genres.map((genre) => genre.name).join(', ');
+
+              return Column(
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        height: size.height * 0.4,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    "$imageurl${movie.posterPath}"),
+                                fit: BoxFit.cover)),
+                        child: SafeArea(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.arrow_back_ios,
+                                    color: Colors.white),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 25, left: 10, right: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.4,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      "$imageurl${movie!.backdropPath}"))),
+                        Text(
+                          movie.title,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Text(
+                              movie.releaseDate.year.toString(),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 30,
+                            ),
+                            Text(
+                              genresText,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 17,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Text(
+                          movie.overview,
+                          maxLines: 6,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 16),
                         ),
                       ],
                     ),
-                  ],
-                );
-              } else {
-                return SizedBox();
-              }
-            }),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  FutureBuilder(
+                    future: movieRecommendationModel,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final movie = snapshot.data;
+
+                        return movie!.results.isEmpty
+                            ? const SizedBox()
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "More like this",
+                                    maxLines: 6,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  GridView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.zero,
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: movie.results.length,
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      mainAxisSpacing: 15,
+                                      childAspectRatio: 1.5 / 2,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetailScreen(
+                                                      movieId: movie
+                                                          .results[index].id),
+                                            ),
+                                          );
+                                        },
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              "$imageurl${movie.results[index].posterPath}",
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                      }
+                      return const Text("Something Went wrong");
+                    },
+                  ),
+                ],
+              );
+            }
+            return const SizedBox();
+          },
+        ),
       ),
     );
   }

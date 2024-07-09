@@ -105,7 +105,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   DetailScreen(
-                                                movie_id: data[index].id,
+                                                movieId: data[index].id,
                                               ),
                                             ),
                                           );
@@ -181,7 +181,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   DetailScreen(
-                                                      movie_id: searchedMovie!
+                                                      movieId: searchedMovie!
                                                           .results[index].id),
                                             ),
                                           );
