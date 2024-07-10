@@ -10,10 +10,29 @@ class MoreScreen extends StatefulWidget {
 class _MoreScreenState extends State<MoreScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text("MoreScreen"),
-      ),
-    );
+    return DefaultTabController(
+        length: 2,
+        child: SafeArea(
+            child: Scaffold(
+                appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.black,
+          title: const Text("New & hot", style: TextStyle(color: Colors.white)),
+          actions: [
+            Icon(
+              Icons.cast,
+              color: Colors.white,
+            ),
+            SizedBox(width: 15),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                color: Colors.blue,
+                height: 25,
+                width: 25,
+              ),
+            )
+          ],
+        ))));
   }
 }
