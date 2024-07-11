@@ -79,15 +79,17 @@ class _MoreScreenState extends State<MoreScreen> {
                   ],
                 ),
               ),
-              const ComingSoonMovieWidget(
-                imageurl:
-                    'https://miro.medium.com/v2/resize:fit:1024/1*P_YU8dGinbCy6GHlgq5OQA.jpeg',
-                overview:
-                    'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.',
-                logourl:
-                    'https://logowik.com/content/uploads/images/stranger-things4286.jpg',
-                month: "Feb",
-                day: "20",
+              SingleChildScrollView(
+                child: const ComingSoonMovieWidget(
+                  imageurl:
+                      'https://miro.medium.com/v2/resize:fit:1024/1*P_YU8dGinbCy6GHlgq5OQA.jpeg',
+                  overview:
+                      'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.',
+                  logourl:
+                      'https://www.careerguide.com/career/wp-content/uploads/2023/10/RRR_full_form-1024x576.jpg',
+                  month: "Feb",
+                  day: "20",
+                ),
               ),
             ],
           ),
