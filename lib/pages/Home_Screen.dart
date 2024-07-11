@@ -46,6 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          SizedBox(
+            width: 20,
+          ),
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: Container(
